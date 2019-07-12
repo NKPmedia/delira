@@ -121,7 +121,7 @@ class DataManager(object):
 
         """
         assert self.n_batches > 0
-
+        self.dataset.pre_epoch_hook(seed)
         data_loader = self.data_loader_cls(
             self.data
         )
