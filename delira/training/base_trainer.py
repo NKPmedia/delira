@@ -821,8 +821,7 @@ class BaseNetworkTrainer(Predictor):
             _logging_kwargs.update(
                 {
                     "log_dir":
-                        os.path.join(os.path.dirname(
-                            os.path.dirname(self.save_path)),
+                        os.path.join(os.path.dirname(self.save_path),
                             "logs", "run_%02d" % self.fold),
                     "level": 0})
 
