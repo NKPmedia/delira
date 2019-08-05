@@ -298,6 +298,7 @@ class Predictor(object):
                 for key, val_list in batch_dict.items():
                     batch_dict[key] = np.concatenate(val_list)
 
+                self.module.pre_forwardpass_hook(batch_dict)
                 batch_dict = self._prepare_batch(batch_dict)
                 preds = self.predict(batch_dict, already_prepared=True,
                                      **kwargs)

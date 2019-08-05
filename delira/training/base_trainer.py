@@ -396,6 +396,7 @@ class BaseNetworkTrainer(Predictor):
 
             data_dict = self._prepare_batch(batch)
 
+            self.module.pre_forwardpass_hook(batch
             _losses, _preds = self.closure_fn(self.module, data_dict,
                                               optimizers=self.optimizers,
                                               losses=self.losses,
