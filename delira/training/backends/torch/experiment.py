@@ -2,6 +2,7 @@ from functools import partial
 import typing
 
 import torch
+from delira.data_loading import DataManager
 
 from delira.models.backends.torch import AbstractPyTorchNetwork
 from delira.data_loading import DataManager
