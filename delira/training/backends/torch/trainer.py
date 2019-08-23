@@ -300,7 +300,7 @@ class PyTorchNetworkTrainer(BaseNetworkTrainer):
                 logger.info("Attempting to load state from previous \
                             training from %s" % latest_state_path)
                 try:
-                    self.update_state(latest_state_path)
+                    self.update_state(latest_state_path,  map_location='cuda:{}'.format(gpu_ids[0]))
                 except KeyError:
                     logger.warning("Previous State could not be loaded, \
                                 although it exists.Training will be \
@@ -326,6 +326,7 @@ class PyTorchNetworkTrainer(BaseNetworkTrainer):
                 # use the only available GPU as input device
                 self.input_device = torch.device("cuda:%d" % gpu_ids[0])
                 self.module = self.module.to(self.input_device)
+                self._move_optimizer_to_device(torch.device("cuda:%d" % gpu_ids[0]))
 
                 # use GPU 0 as output device as output device
                 self.output_device = torch.device("cuda:%d" % gpu_ids[0])
@@ -362,6 +363,13 @@ class PyTorchNetworkTrainer(BaseNetworkTrainer):
                 "training insted. The following Exception occured:"
                 "\n%s" %
                 str(e))
+
+    def _move_optimizer_to_device(self, device):
+        for name, op in self.optimizers.items():
+            for state in op.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.to(device)
 
     def _at_training_begin(self, *args, **kwargs):
         """
