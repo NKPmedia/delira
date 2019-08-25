@@ -263,7 +263,6 @@ class _ParallelAugmenter(AbstractAugmenter):
         data = self._data_pipes[_data_pipe].recv()
         # decrease number of enqueued batches for current worker
         self._data_queued[_data_pipe] -= 1
-
         return data
 
     def __iter__(self):
