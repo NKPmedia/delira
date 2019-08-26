@@ -135,3 +135,6 @@ class AbstractNetwork(object):
 
     def pre_forwardpass_hook(self, batch_dict):
         pass
+
+    def past_predict_forwardpass_hook(self, batch_dict, preds):
+        pass

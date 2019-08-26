@@ -302,6 +302,7 @@ class Predictor(object):
                 batch_dict = self._prepare_batch(batch_dict)
                 preds = self.predict(batch_dict, already_prepared=True,
                                      **kwargs)
+                self.module.past_predict_forwardpass_hook(batch_dict, preds)
 
                 # convert batchdict back to numpy (self.predict may convert it
                 # to backend-specific tensor type) - no-op if already numpy
