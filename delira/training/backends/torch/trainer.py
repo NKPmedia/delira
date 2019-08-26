@@ -449,6 +449,8 @@ class PyTorchNetworkTrainer(BaseNetworkTrainer):
                                          "checkpoint_best.pt"),
                             epoch)
 
+        self.delete_old_states(self.save_path, max_states=4)
+
     def _train_single_epoch(self, batchgen: MultiThreadedAugmenter, epoch,
                             verbose=False):
         """
@@ -606,3 +608,23 @@ class PyTorchNetworkTrainer(BaseNetworkTrainer):
         if extensions is None:
             extensions = [".pt", ".pth"]
         return BaseNetworkTrainer._search_for_prev_state(path, extensions)
+
+    def delete_old_states(self, save_path: str, extensions=None, max_states: int=-1):
+        """
+        Deletes old states in the save directory
+
+        Parameters
+        ----------
+        save_path : str
+            Path to saved states
+        extensions: list
+            Extensions to search for
+        max_states: int
+            Number of last states that should stay (-1 is all should stay)
+
+
+        """
+        if extensions is None:
+            extensions = [".pt", ".pth"]
+
+        return BaseNetworkTrainer.delete_old_states(save_path, extensions, max_states)

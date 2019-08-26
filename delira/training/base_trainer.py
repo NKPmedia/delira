@@ -1,3 +1,4 @@
+import collections
 import logging
 import os
 import pickle
@@ -306,6 +307,8 @@ class BaseNetworkTrainer(Predictor):
         if is_best:
             self.save_state(os.path.join(self.save_path,
                                          "checkpoint_best"))
+
+        self.delete_old_states(self.save_path, max_states=4)
 
     def _at_iter_begin(self, iter_num, epoch=0, **kwargs):
         """
@@ -628,6 +631,28 @@ class BaseNetworkTrainer(Predictor):
 
         super().register_callback(callback)
 
+    @staticmethod
+    def delete_old_states(save_path: str, extensions=None, max_states: int=-1):
+        """
+        Deletes old states in the save directory
+
+        Parameters
+        ----------
+        save_path : str
+            Path to saved states
+        max_states: int
+            Number of last states that should stay (-1 is all should stay)
+
+
+        """
+        if max_states != -1:
+            old_states = BaseNetworkTrainer.get_sorted_old_states(save_path, extensions)
+
+            for state_name in old_states[:-max_states]:
+                state_path = os.path.join(save_path, state_name)
+                os.remove(state_path)
+
+
     def save_state(self, file_name, *args, **kwargs):
         """
         saves the current state
@@ -906,6 +931,34 @@ class BaseNetworkTrainer(Predictor):
             return latest_state_path, latest_epoch
 
         return None, 1
+
+    @staticmethod
+    def get_sorted_old_states(path, extensions=None):
+        if extensions is None:
+            extensions = []
+        files = []
+        for file in os.listdir(path):
+            for ext in extensions:
+                if not ext.startswith("."):
+                    ext = "." + ext
+
+                if not file.endswith(ext):
+                    continue
+
+                if not file.startswith("checkpoint"):
+                    continue
+
+                if file.endswith("_best" + ext):
+                    continue
+
+                files.append(file)
+                break
+
+        def get_epoch(name):
+            return int(name.rsplit("_", 1)[-1].split(".", 1)[0])
+
+        files.sort(key=get_epoch)
+        return files
 
     def register_callback(self, callback: AbstractCallback):
         """
