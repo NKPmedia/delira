@@ -133,7 +133,7 @@ class AbstractNetwork(object):
         """
         return self._init_kwargs
 
-    def pre_forwardpass_hook(self, batch_dict):
+    def pre_forwardpass_hook(self, batch_dict, mode=None, epoch=-1):
         pass
 
     def past_predict_forwardpass_hook(self, batch_dict, preds):

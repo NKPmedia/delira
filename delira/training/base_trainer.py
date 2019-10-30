@@ -399,7 +399,7 @@ class BaseNetworkTrainer(Predictor):
 
             data_dict = self._prepare_batch(batch)
 
-            self.module.pre_forwardpass_hook(data_dict)
+            self.module.pre_forwardpass_hook(data_dict, mode="train", epoch=epoch)
             _losses, _preds = self.closure_fn(self.module, data_dict,
                                               optimizers=self.optimizers,
                                               losses=self.losses,
@@ -413,7 +413,6 @@ class BaseNetworkTrainer(Predictor):
                 LookupConfig(**data_dict, **_preds),
                 self.metrics,
                 self.metric_keys)
-
             metrics.append(_metrics)
             losses.append(_losses)
 
